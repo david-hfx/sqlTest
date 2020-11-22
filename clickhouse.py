@@ -49,12 +49,6 @@ def execute(sql):
         session.close()
 
 
-def get_data():
-    session = get_session(engine)
-    q = session.query(system.asynchronous_metrics)
-    print(q)
-
-
 if __name__ == "__main__":
 
     # base_sql = "select * from system.asynchronous_metrics"
