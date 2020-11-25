@@ -1,27 +1,11 @@
 import time
 
 import pandas as pd
-from sqlalchemy import Column, Float, String, create_engine
+from sqlalchemy import MetaData, Table, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 start = time.time()
-Base = declarative_base()
-
-
-class System(Base):
-    __tablename__ = "asynchronous_metrics"
-
-    metric = Column(String, primary_key=True)
-    value = Column(Float(64))
-    #
-    # def __init__(self, metric=None, value=None):
-    #     self.data = (metric, value)
-    #
-    # def __repr__(self):
-    #     return "{}, {}".format(self.metric, self.value)
-
-
 conf = {
     # "user": "",
     # "password": "",
@@ -33,6 +17,18 @@ connection = "clickhouse://default:@{server_host}:{port}/{db}".format(**conf)
 engine = create_engine(
     connection, echo=False, pool_size=100, pool_recycle=3600, pool_timeout=20
 )
+
+Base = declarative_base(bind=engine)
+metadata = MetaData(bind=engine)
+metadata.reflect(schema="system", only=["asynchronous_metrics"])
+
+
+class System(Base):
+    __tablename__ = "asynchronous_metrics"
+    __table__ = Table(__tablename__, metadata, autoload=True, autoload_with=engine)
+    # metric = Column(String, primary_key=True)
+    __mapper_args__ = {"primary_key": [__table__.c.metric]}
+
 
 Session = sessionmaker(bind=engine)
 session = Session()
