@@ -1,8 +1,10 @@
 import time
 
 import pandas as pd
+from clickhouse_sqlalchemy import make_session
 from sqlalchemy import MetaData, create_engine
-from sqlalchemy.orm import sessionmaker
+
+# from sqlalchemy.orm import sessionmaker
 
 start = time.time()
 conf = {
@@ -20,9 +22,10 @@ engine = create_engine(
 metadata = MetaData(bind=engine)
 metadata.reflect(schema="system", only=["asynchronous_metrics"])
 System = metadata.tables["asynchronous_metrics"]
-Session = sessionmaker(bind=engine)
-session = Session()
-for _ in range(1000):
-    rs = session.query(System).filter(System.c.value > 0)
-    df = pd.read_sql(sql=rs.statement, con=session.bind)
+# Session = sessionmaker(bind=engine)
+# session = Session()
+session = make_session(engine)
+# for _ in range(1000):
+rs = session.query(System).filter(System.c.value > 0)
+df = pd.read_sql(sql=rs.statement, con=session.bind)
 print(time.time() - start)

@@ -1,5 +1,24 @@
 {
     "editor.snippetSuggestions": "bottom",
     "editor.suggest.snippetsPreventQuickSuggestions": false,
-    "python.pythonPath": "C:\\Users\\david\\anaconda3\\envs\\sqlTest\\python.exe"
+    "python.pythonPath": "C:\\Users\\david\\anaconda3\\envs\\sqlTest\\python.exe",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "jdbc:sqlite:C:\\Users\\david\\AppData\\Roaming\\DBeaverData\\workspace6\\.metadata\\sample-database-sqlite-1\\Chinook.db",
+            "name": "sample"
+        },
+        {
+            "port": 8123,
+            "previewLimit": 1000,
+            "driver": "ClickHouse",
+            "name": "system",
+            "server": "127.0.0.1",
+            "database": "system",
+            "useHTTPS": false,
+            "readonly": false
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }

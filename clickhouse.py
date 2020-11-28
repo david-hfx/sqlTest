@@ -1,19 +1,21 @@
 import time
 
 import pandas as pd
-from sqlalchemy import Column, Float, String, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from clickhouse_sqlalchemy import get_declarative_base, make_session, types
+from sqlalchemy import Column, create_engine
+
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import sessionmaker
 
 start = time.time()
-Base = declarative_base()
+Base = get_declarative_base()
 
 
 class System(Base):
     __tablename__ = "asynchronous_metrics"
 
-    metric = Column(String, primary_key=True)
-    value = Column(Float(64))
+    metric = Column(types.String, primary_key=True)
+    value = Column(types.Float(64))
     #
     # def __init__(self, metric=None, value=None):
     #     self.data = (metric, value)
@@ -34,9 +36,9 @@ engine = create_engine(
     connection, echo=False, pool_size=100, pool_recycle=3600, pool_timeout=20
 )
 
-Session = sessionmaker(bind=engine)
-session = Session()
-for _ in range(1000):
-    rs = session.query(System).filter(System.value > 0)
-    df = pd.read_sql(sql=rs.statement, con=session.bind)
+session = make_session(engine)
+# session = Session()
+# for _ in range(1000):
+rs = session.query(System).filter(System.value > 0)
+df = pd.read_sql(sql=rs.statement, con=session.bind)
 print(time.time() - start)
